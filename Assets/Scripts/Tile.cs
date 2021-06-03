@@ -15,7 +15,7 @@ public class Tile : MonoBehaviour
     public bool visited = false;
     public Tile parent = null;//Casilla a través de la que llegamos
     public int distance = 0;//Distancia del original
-        
+    
     private void Awake()
     {     
         Vector3 pos = transform.position; 
