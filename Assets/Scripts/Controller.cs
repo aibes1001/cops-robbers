@@ -134,6 +134,7 @@ public class Controller : MonoBehaviour
         {
             matriu[fila, columna - 1] = 1;
         }
+
     }
 
     //Reseteamos cada casilla: color, padre, distancia y visitada
@@ -222,6 +223,7 @@ public class Controller : MonoBehaviour
         - Movemos al caco a esa casilla
         - Actualizamos la variable currentTile del caco a la nueva casilla
         */
+        
         robber.GetComponent<RobberMove>().MoveToTile(tiles[robber.GetComponent<RobberMove>().currentTile]);
     }
 
@@ -281,9 +283,52 @@ public class Controller : MonoBehaviour
 
         //TODO: Implementar BFS. Los nodos seleccionables los ponemos como selectable=true
         //Tendrás que cambiar este código por el BFS
-        for(int i = 0; i < Constants.NumTiles; i++)
+
+        tiles[indexcurrentTile].visited = true;
+        nodes.Enqueue(tiles[indexcurrentTile]);
+
+        while (nodes.Count > 0)
         {
-            tiles[i].selectable = true;
+            Tile t = nodes.Dequeue();
+            if (t.distance < 2)
+            {
+                foreach (int num in t.adjacency)
+                {
+                    //Evita entrar a un poli a la casella d'un altre, i al caco de suicidar-se
+                    bool ocupada = deselectableTileCops(tiles[num]);
+                    if (!tiles[num].visited && !ocupada)
+                    {
+                        tiles[num].parent = t;
+                        tiles[num].selectable = true;
+                        tiles[num].distance = t.distance + 1;
+                        tiles[num].visited = true;
+                        nodes.Enqueue(tiles[num]);
+                    }
+                }
+            }
+
         }
-    }   
+
+        
+        /*for (int i = 0; i < Constants.NumTiles; i++)
+        {
+            if (tiles[indexcurrentTile].adjacency.Contains(tiles[i].numTile))
+            {
+                tiles[i].selectable = true;
+            }
+        }*/
+    }
+    
+    bool deselectableTileCops(Tile t)
+    {
+        foreach(GameObject cop in cops)
+        {
+            int num = cop.GetComponent<CopMove>().currentTile;
+            if(num == t.numTile)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
