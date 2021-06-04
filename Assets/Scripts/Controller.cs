@@ -223,7 +223,19 @@ public class Controller : MonoBehaviour
         - Movemos al caco a esa casilla
         - Actualizamos la variable currentTile del caco a la nueva casilla
         */
-        
+
+        List<Tile> selectableTiles = new List<Tile>();
+        foreach(Tile t in tiles)
+        {
+            if (t.selectable)
+            {
+                selectableTiles.Add(t);
+            }
+        }
+
+        int count = selectableTiles.Count;
+        robber.GetComponent<RobberMove>().currentTile = selectableTiles[Random.Range(0, count)].numTile;
+
         robber.GetComponent<RobberMove>().MoveToTile(tiles[robber.GetComponent<RobberMove>().currentTile]);
     }
 
@@ -261,7 +273,7 @@ public class Controller : MonoBehaviour
 
     public void IncreaseRoundCount()
     {
-        roundCount++;
+        //roundCount++;
         rounds.text = "Rounds: " + roundCount;
     }
 
@@ -294,7 +306,7 @@ public class Controller : MonoBehaviour
             {
                 foreach (int num in t.adjacency)
                 {
-                    //Evita entrar a un poli a la casella d'un altre, i al caco de suicidar-se
+                    //Evita entrar a un poli a la casella d'un altre, i al caco suicidar-se
                     bool ocupada = deselectableTileCops(tiles[num]);
                     if (!tiles[num].visited && !ocupada)
                     {
@@ -309,14 +321,6 @@ public class Controller : MonoBehaviour
 
         }
 
-        
-        /*for (int i = 0; i < Constants.NumTiles; i++)
-        {
-            if (tiles[indexcurrentTile].adjacency.Contains(tiles[i].numTile))
-            {
-                tiles[i].selectable = true;
-            }
-        }*/
     }
     
     bool deselectableTileCops(Tile t)
