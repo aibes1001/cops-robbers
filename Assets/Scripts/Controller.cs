@@ -64,6 +64,8 @@ public class Controller : MonoBehaviour
         }
 
 
+        //TODO: Para cada posición, rellenar con 1's las casillas adyacentes (arriba, abajo, izquierda y derecha)
+        //TODO: Rellenar la lista "adjacency" de cada casilla con los índices de sus casillas adyacentes
         for (int i = 0; i < Constants.NumTiles; i++)
         {
             for (int j = 0; j < Constants.NumTiles; j++)
@@ -118,41 +120,6 @@ public class Controller : MonoBehaviour
             fila += columna + "\n";
         }
         Debug.Log(fila);
-        /*
-        //TODO: Para cada posición, rellenar con 1's las casillas adyacentes (arriba, abajo, izquierda y derecha)
-        foreach (GameObject cop in cops)
-        {
-            //Passem la matriu, un gameobject i si es cop(true) o robber(false);
-            casillasAdyacentesMatriz(matriu, cop, true);
-        }
-
-        casillasAdyacentesMatriz(matriu, robber, false);
-
-        
-        //TODO: Rellenar la lista "adjacency" de cada casilla con los índices de sus casillas adyacentes
-        foreach (Tile tile in tiles)
-        {
-            //Casilla adjacent de "dalt"
-            if (tile.numTile - Constants.TilesPerRow >= 0)
-            {
-                tile.adjacency.Add(tile.numTile - Constants.TilesPerRow);
-            }
-            //Casilla adjacent de "baix"
-            if (tile.numTile + Constants.TilesPerRow <= ((Constants.TilesPerRow * Constants.TilesPerRow) - 1))
-            {
-                tile.adjacency.Add(tile.numTile + Constants.TilesPerRow);
-            }
-            //Casilla adjacent de "dreta"
-            if (tile.numTile % Constants.TilesPerRow != (Constants.TilesPerRow - 1)) // si no és una del costat dret
-            {
-                tile.adjacency.Add(tile.numTile + 1);
-            }
-            //Casilla adjacent de "esquerra"
-            if (tile.numTile % Constants.TilesPerRow != 0) // si no és una del costat esquerra
-            {
-                tile.adjacency.Add(tile.numTile - 1);
-            }
-        }*/
     }
 
 
@@ -293,11 +260,15 @@ public class Controller : MonoBehaviour
             {
                 int[] distancia = distanciaCasillaCops(t);
 
+                //Si la distància més pròxima a un policia de la casella és major que la que estava guardada
                 if (distancia[0] > distanciaMasLejos[0])
                 {
                     distanciaMasLejos = distancia;
                     casillaMasLejos = t.numTile;
-                }else if(distancia[0] == distanciaMasLejos[0])
+                }
+
+                //En cas de tindre la mateixa distància mínima de 2 caselles, escollir la casella més llunyana de l'altre policia
+                else if(distancia[0] == distanciaMasLejos[0])
                 {
                     if(distancia[1] >= distanciaMasLejos[1])
                     {
@@ -316,7 +287,7 @@ public class Controller : MonoBehaviour
         Debug.Log("Casilla seleccionada: " + robber.GetComponent<RobberMove>().currentTile);
     }
 
-    //Calcula la distancia a cada policia passant com a parametre una casella
+    //Calcula la distancia a cada policia passant com a parametre una casella i retorna una llista d'enters amb les distàncies als 2 polis
     int[] distanciaCasillaCops(Tile t)
     {
         int casilla = t.numTile;
@@ -333,12 +304,11 @@ public class Controller : MonoBehaviour
 
             //Mesurem la diferència entre les caselles
             int sumaCasillas = System.Math.Abs(filaCop - filaT) + System.Math.Abs(columnaCop - columnaT);
-
             distancias[cont] = sumaCasillas;
             cont++;
         }
 
-        //Retorna la distància més pròxima a un dels 2 policies (es la que s'ha de tindre en compte)
+        //Ordenar la llista per a tindre primer la distància al policia més pròxim
         if (distancias[0] > distancias[1])
         {
             int aux = distancias[0];
@@ -383,7 +353,7 @@ public class Controller : MonoBehaviour
 
     public void IncreaseRoundCount()
     {
-        //roundCount++;
+        roundCount++;
         rounds.text = "Rounds: " + roundCount;
     }
 
@@ -427,7 +397,6 @@ public class Controller : MonoBehaviour
                     }
                 }
             }
-
         }
     }
 
